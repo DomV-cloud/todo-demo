@@ -3,9 +3,8 @@ import * as taskApi from "../../api/taskApi";
 
 export const loadTasksThunkTlk = createAsyncThunk(
   "tasks/loadTasks",
-  async (newTask, thunkAPI) => {
+  async newTask => {
     const response = await taskApi.getTasks(newTask);
-    console.log("What is it?:", thunkAPI);
 
     return response;
   }

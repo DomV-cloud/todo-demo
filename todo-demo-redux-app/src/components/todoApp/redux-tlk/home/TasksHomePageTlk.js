@@ -4,6 +4,7 @@ import { newTask } from "../../../../../tools/mockData";
 import { useSelector, useDispatch } from "react-redux";
 import { loadTasksThunkTlk } from "../../../../redux-tlk/reduxThunks/loadTasksThunkTlk";
 import { saveTaskThunkTlk } from "../../../../redux-tlk/reduxThunks/saveTaskThunkTlk";
+import { deleteTaskThunkTlk } from "../../../../redux-tlk/reduxThunks/deleteTaskThunkTlk";
 
 // using Redux tlk
 export default function TasksHomePageTlk() {
@@ -12,15 +13,18 @@ export default function TasksHomePageTlk() {
 
   function handleSubmit(values) {
     const task = { ...values, id: values.id };
-    console.log("Task to create:", task);
     dispatch(saveTaskThunkTlk(task));
   }
 
+  function handleDelete(id) {
+    if (id) {
+      dispatch(deleteTaskThunkTlk(id));
+    }
+  }
+
   useEffect(() => {
-    console.log("Tasks:", tasks);
     if (tasks.length === 0) {
       dispatch(loadTasksThunkTlk());
-      console.log("Jop!");
     }
   }, []);
 
@@ -54,7 +58,8 @@ export default function TasksHomePageTlk() {
         {tasks.map(task => {
           return (
             <div key={task.id}>
-              {task.title} <button>Delete</button>
+              {task.title}{" "}
+              <button onClick={() => handleDelete(task.id)}>Delete</button>
             </div>
           );
         })}

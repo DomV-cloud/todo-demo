@@ -1,11 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 import initialState from "../../redux/reducers/initialState";
 import { loadTasksThunkTlk } from "../reduxThunks/loadTasksThunkTlk";
+import { saveTaskThunkTlk } from "../reduxThunks/saveTaskThunkTlk";
+import { deleteTaskThunkTlk } from "../reduxThunks/deleteTaskThunkTlk";
 
 const taskSlice = createSlice({
   name: "tasks",
   initialState,
+  // this is used only for sync communication
   reducers: {
+    // only to show it
     loadTasks: (state, action) => {
       return action.tasks;
     },
@@ -13,21 +17,21 @@ const taskSlice = createSlice({
       return state.tasks.push(action.payload);
     }
   },
+  // different reducers vs extrareducers?
+  // extraReducer for async communication?
   extraReducers: builder => {
     builder
-      .addCase(loadTasksThunkTlk.pending, state => {
-        state.status = "loading"; // Během načítání dat
-      })
       .addCase(loadTasksThunkTlk.fulfilled, (state, action) => {
-        state.status = "succeeded"; // Úspěšně načteno
-        state.tasks = action.payload; // Nastaví data
+        state.status = "succeeded";
+        state.tasks = action.payload;
       })
-      .addCase(loadTasksThunkTlk.rejected, (state, action) => {
-        state.status = "failed"; // Chyba při načítání
-        state.error = action.error.message;
+      .addCase(saveTaskThunkTlk.fulfilled, (state, action) => {
+        state.tasks.push(action.payload);
+      })
+      .addCase(deleteTaskThunkTlk.fulfilled, (state, action) => {
+        state.tasks.filter(task => task.id !== action.taskId);
       });
   }
 });
 
-export const { loadTasks } = taskSlice.actions;
 export default taskSlice.reducer;
